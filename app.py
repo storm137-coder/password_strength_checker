@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import sqlite3
 import bcrypt
 from datetime import datetime
+import os
 import pkgutil
 import importlib.util
 
@@ -37,19 +38,43 @@ def get_db_connection():
 # Initialize database
 # -----------------------------
 def init_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            full_name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            created_at TEXT NOT NULL
-        )
-    """)
-    conn.commit()
-    conn.close()
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                full_name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        """)
+        conn.commit()
+        conn.close()
+    except sqlite3.DatabaseError:
+        # If the SQLite file is corrupted, recreate it so registration works.
+        try:
+            if conn is not None:
+                conn.close()
+        except Exception:
+            pass
+        if os.path.exists(DATABASE):
+            os.remove(DATABASE)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                full_name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        """)
+        conn.commit()
+        conn.close()
 
 # -----------------------------
 # Home page
@@ -81,6 +106,7 @@ def register():
         # Hash password with bcrypt
         password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
+        conn = None
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
@@ -95,6 +121,26 @@ def register():
         except sqlite3.IntegrityError:
             flash("Email already registered.", "error")
             return redirect(url_for("register"))
+        except sqlite3.DatabaseError:
+            # Recover from a malformed database and retry once.
+            try:
+                if conn is not None:
+                    conn.close()
+            except Exception:
+                pass
+            if os.path.exists(DATABASE):
+                os.remove(DATABASE)
+            init_db()
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO users (full_name, email, password_hash, created_at)
+                VALUES (?, ?, ?, ?)
+            """, (full_name, email, password_hash.decode("utf-8"), datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            conn.commit()
+            conn.close()
+            flash("Registration successful! You can now log in.", "success")
+            return redirect(url_for("login"))
 
     return render_template("register.html")
 
