@@ -336,19 +336,277 @@ a:hover {
   border-radius: 8px;
 }
 
-@media (max-width: 600px) {
-  .card {
-    padding: 20px;
-    margin: 12px;
+/* Comprehensive responsive design for all screen sizes */
+
+/* Extra small devices (320px - 480px) */
+@media (max-width: 480px) {
+  * {
+    font-size: 14px;
   }
+
+  body {
+    font-size: 14px;
+  }
+
   .container {
-    padding: 24px 12px;
+    padding: 16px 12px;
     min-height: auto;
+  }
+
+  .card {
+    padding: 16px;
+    margin: 8px;
+    border-radius: 8px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+
+  input,
+  textarea {
+    padding: 10px;
+    margin: 8px 0;
+    font-size: 16px;
+  }
+
+  button {
+    min-width: 90px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .form-actions.center {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-actions.center button,
+  .home-actions a button {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .home-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-actions a button {
+    width: 100%;
+  }
+
+  /* Password page adjustments */
+  #length {
+    width: 60px;
+  }
+
+  .user-table {
+    min-width: 100%;
+    font-size: 0.85rem;
+  }
+
+  .user-table th,
+  .user-table td {
+    padding: 8px 10px;
+  }
+
+  .hash-cell {
+    font-size: 0.75rem;
+  }
+
+  .btn-small {
+    width: 100%;
+    min-width: auto;
+    padding: 8px 12px;
   }
 }
 
-@media (min-width: 901px) {
+/* Small devices (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .container {
+    padding: 20px 16px;
+  }
+
+  .card {
+    padding: 24px;
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  button {
+    min-width: 110px;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+
+  .form-actions.center {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .form-actions.center button {
+    min-width: 140px;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .home-actions {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .home-actions a button {
+    min-width: 140px;
+    flex: 1 1 calc(50% - 6px);
+  }
+
+  .user-table {
+    font-size: 0.9rem;
+  }
+
+  .user-table th,
+  .user-table td {
+    padding: 10px 12px;
+  }
+}
+
+/* Medium devices (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    padding: 32px 24px;
+  }
+
+  .card {
+    padding: 32px;
+    max-width: 800px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  button {
+    min-width: 120px;
+    padding: 10px 18px;
+  }
+
+  .form-actions.center button {
+    min-width: 160px;
+  }
+
+  .home-actions a button {
+    min-width: 150px;
+  }
+}
+
+/* Large devices (1025px and up) */
+@media (min-width: 1025px) {
+  .container {
+    padding: 40px 32px;
+  }
+
+  .card {
+    padding: 36px;
+    max-width: 900px;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  button {
+    min-width: 120px;
+    padding: 10px 16px;
+  }
+
+  .form-actions.center button {
+    min-width: 160px;
+  }
+
+  .home-actions a button {
+    min-width: 160px;
+  }
+}
+
+/* Extra large devices (1201px and up) */
+@media (min-width: 1201px) {
   .card {
     padding: 48px;
+    max-width: 1000px;
+  }
+}
+
+/* Improved responsive table visibility */
+@media (max-width: 768px) {
+  .user-table {
+    font-size: 0.85rem;
+  }
+
+  .hash-cell {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+  button {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+
+  input,
+  textarea {
+    min-height: 44px;
+    padding: 12px;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+  .container {
+    min-height: auto;
+    padding: 16px 32px;
+  }
+
+  .card {
+    padding: 16px 24px;
+  }
+
+  h1,
+  h2 {
+    margin-bottom: 8px;
+  }
+
+  input,
+  textarea {
+    margin: 6px 0;
   }
 }
