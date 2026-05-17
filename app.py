@@ -24,7 +24,16 @@ app = Flask('app')
 # Secret key for session security (change this in production)
 app.secret_key = "super_secret_key_change_this"
 
-DATABASE = "users.db"
+def get_database_path():
+    # Vercel's runtime only guarantees write access to /tmp.
+    if os.environ.get("DATABASE_PATH"):
+        return os.environ["DATABASE_PATH"]
+    if os.environ.get("VERCEL"):
+        return "/tmp/users.db"
+    return os.path.join(os.path.dirname(__file__), "users.db")
+
+
+DATABASE = get_database_path()
 
 # -----------------------------
 # Database helper function
@@ -40,6 +49,9 @@ def get_db_connection():
 def init_db():
     conn = None
     try:
+        db_dir = os.path.dirname(DATABASE)
+        if db_dir:
+            os.makedirs(db_dir, exist_ok=True)
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
@@ -75,6 +87,11 @@ def init_db():
         """)
         conn.commit()
         conn.close()
+
+
+    # Ensure the database exists whether the app is run locally or imported
+    # by a serverless host such as Vercel.
+    init_db()
 
 # -----------------------------
 # Home page
