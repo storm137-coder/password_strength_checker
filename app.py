@@ -33,18 +33,16 @@ def get_database_path():
     # Vercel's runtime only guarantees write access to /tmp.
     if os.environ.get("DATABASE_PATH"):
         return os.environ["DATABASE_PATH"]
-    if os.environ.get("VERCEL"):
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    if os.environ.get("VERCEL") or not os.access(project_dir, os.W_OK):
         return "/tmp/users.db"
-    return os.path.join(os.path.dirname(__file__), "users.db")
-
-
-DATABASE = get_database_path()
+    return os.path.join(project_dir, "users.db")
 
 # -----------------------------
 # Database helper function
 # -----------------------------
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(get_database_path())
     conn.row_factory = sqlite3.Row  # Access columns by name
     return conn
 
@@ -65,7 +63,8 @@ def verify_password(stored_hash, password):
 def init_db():
     conn = None
     try:
-        db_dir = os.path.dirname(DATABASE)
+        database_path = get_database_path()
+        db_dir = os.path.dirname(database_path)
         if db_dir:
             os.makedirs(db_dir, exist_ok=True)
         conn = get_db_connection()
@@ -88,8 +87,9 @@ def init_db():
                 conn.close()
         except Exception:
             pass
-        if os.path.exists(DATABASE):
-            os.remove(DATABASE)
+        database_path = get_database_path()
+        if os.path.exists(database_path):
+            os.remove(database_path)
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
@@ -160,8 +160,9 @@ def register():
                     conn.close()
             except Exception:
                 pass
-            if os.path.exists(DATABASE):
-                os.remove(DATABASE)
+            database_path = get_database_path()
+            if os.path.exists(database_path):
+                os.remove(database_path)
             init_db()
             conn = get_db_connection()
             cursor = conn.cursor()
