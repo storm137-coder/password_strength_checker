@@ -105,9 +105,9 @@ def init_db():
         conn.close()
 
 
-    # Ensure the database exists whether the app is run locally or imported
-    # by a serverless host such as Vercel.
-    init_db()
+# Ensure the database exists whether the app is run locally or imported
+# by a serverless host such as Vercel.
+init_db()
 
 # -----------------------------
 # Home page
