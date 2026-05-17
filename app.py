@@ -3,11 +3,16 @@
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
-import bcrypt
 from datetime import datetime
 import os
 import pkgutil
 import importlib.util
+from werkzeug.security import generate_password_hash, check_password_hash
+
+try:
+    import bcrypt
+except Exception:
+    bcrypt = None
 
 # Compatibility shim: Python 3.12+ removed `pkgutil.get_loader` which
 # some dependencies (Flask/Werkzeug) still call. Provide a simple
@@ -42,6 +47,17 @@ def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row  # Access columns by name
     return conn
+
+
+def hash_password(password):
+    # Use Werkzeug's pure-Python hashing for deployment portability.
+    return generate_password_hash(password)
+
+
+def verify_password(stored_hash, password):
+    if stored_hash.startswith("$2") and bcrypt is not None:
+        return bcrypt.checkpw(password.encode("utf-8"), stored_hash.encode("utf-8"))
+    return check_password_hash(stored_hash, password)
 
 # -----------------------------
 # Initialize database
@@ -120,8 +136,7 @@ def register():
             flash("Passwords do not match.", "error")
             return redirect(url_for("register"))
 
-        # Hash password with bcrypt
-        password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        password_hash = hash_password(password)
 
         conn = None
         try:
@@ -130,7 +145,7 @@ def register():
             cursor.execute("""
                 INSERT INTO users (full_name, email, password_hash, created_at)
                 VALUES (?, ?, ?, ?)
-            """, (full_name, email, password_hash.decode("utf-8"), datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            """, (full_name, email, password_hash, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             conn.close()
             flash("Registration successful! You can now log in.", "success")
@@ -153,7 +168,7 @@ def register():
             cursor.execute("""
                 INSERT INTO users (full_name, email, password_hash, created_at)
                 VALUES (?, ?, ?, ?)
-            """, (full_name, email, password_hash.decode("utf-8"), datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            """, (full_name, email, password_hash, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             conn.close()
             flash("Registration successful! You can now log in.", "success")
@@ -176,7 +191,7 @@ def login():
         user = cursor.fetchone()
         conn.close()
 
-        if user and bcrypt.checkpw(password.encode("utf-8"), user["password_hash"].encode("utf-8")):
+        if user and verify_password(user["password_hash"], password):
             session["user_id"] = user["id"]
             session["full_name"] = user["full_name"]
             session["created_at"] = user["created_at"]
