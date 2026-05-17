@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home | Secure Login</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>Secure Password Strength Checker</h1>
+        <div class="home-actions">
+          <a href="{{ url_for('register') }}"><button>Register</button></a>
+          <a href="{{ url_for('login') }}"><button>Login</button></a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

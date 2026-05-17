@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Register</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h2>Register</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% for
+        category, message in messages %}
+        <div class="message {{ category }}">{{ message }}</div>
+        {% endfor %} {% endwith %}
+
+        <form method="POST">
+          <input
+            type="text"
+            name="full_name"
+            placeholder="Full Name"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            required
+          />
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <div class="strength">
+            <div id="strength-bar" class="strength-bar"></div>
+          </div>
+          <small id="strength-text">Strength</small>
+
+          <input
+            type="password"
+            id="confirm_password"
+            name="confirm_password"
+            placeholder="Confirm Password"
+            required
+          />
+          <div class="form-actions center" style="margin-top: 8px">
+            <button type="submit" class="btn-small">Create Account</button>
+          </div>
+        </form>
+
+        <div class="form-actions center" style="margin-top: 14px">
+          <a href="{{ url_for('login') }}"
+            ><button type="button">Already have an account? Login</button></a
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

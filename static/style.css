@@ -1,0 +1,354 @@
+/* style.css - Black and red theme UI */
+
+:root {
+  --bg-main: #050505;
+  --bg-surface: #120707;
+  --bg-input: #1a0a0a;
+  --text-main: #f7f3f3;
+  --text-muted: #c9b8b8;
+  --red-main: #d81f26;
+  --red-bright: #ff3b43;
+  --red-deep: #8f1015;
+  --border-main: #4a1a1d;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: radial-gradient(circle at top, #200909 0%, var(--bg-main) 55%);
+  color: var(--text-main);
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  min-height: calc(100vh - 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+}
+
+.card {
+  background: linear-gradient(180deg, #1a0a0a 0%, var(--bg-surface) 100%);
+  border: 1px solid var(--border-main);
+  border-radius: 12px;
+  padding: 36px;
+  box-shadow: 0 0 32px rgba(216, 31, 38, 0.22);
+  margin: 0;
+  width: 100%;
+  max-width: 900px;
+}
+
+h1,
+h2 {
+  text-align: center;
+  color: var(--red-bright);
+}
+
+p,
+small,
+label {
+  color: var(--text-main);
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+  border-radius: 6px;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--red-main);
+  box-shadow: 0 0 0 2px rgba(216, 31, 38, 0.2);
+}
+
+button {
+  display: inline-block;
+  min-width: 110px;
+  padding: 10px 16px;
+  background: linear-gradient(
+    90deg,
+    var(--red-deep),
+    var(--red-main),
+    var(--red-bright)
+  );
+  background-size: 200% 100%;
+  border: 1px solid rgba(123, 19, 24, 0.9);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+  box-shadow: 0 6px 18px rgba(216, 31, 38, 0.12);
+  animation: btn-anim 4s linear infinite;
+}
+
+@keyframes btn-anim {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+button:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.06);
+  box-shadow: 0 10px 26px rgba(255, 59, 67, 0.22);
+}
+
+button:active {
+  transform: translateY(-1px) scale(0.995);
+}
+
+/* Keep form submit buttons full width */
+.card form button {
+  display: block;
+  width: 100%;
+}
+
+/* Centered form actions (use on login page) */
+.form-actions.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.form-actions.center button {
+  width: auto;
+  min-width: 160px;
+  padding: 10px 18px;
+}
+
+/* Password page spacing and typography improvements */
+#keywords,
+#generated,
+#generated_preview,
+#check_password {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+#keywords {
+  padding: 10px;
+}
+
+#generated {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+#generated_preview {
+  display: block;
+  margin-top: 8px;
+  padding: 10px;
+  background: rgba(216, 31, 38, 0.06);
+  border: 1px solid rgba(123, 19, 24, 0.08);
+  border-radius: 6px;
+  color: var(--text-main);
+}
+
+#check_password {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Reduce visual clutter by spacing password page sections */
+.card > div {
+  margin-bottom: 12px;
+}
+.card > div:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Small visual lift for cards */
+.card {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(216, 31, 38, 0.18);
+}
+
+a {
+  color: #ff6a70;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ff8c91;
+}
+
+.message {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid var(--border-main);
+}
+
+.message.success {
+  background: #2a0f11;
+  color: #ff9ca0;
+}
+
+.message.error {
+  background: #3b1012;
+  color: #ff6b72;
+}
+
+.strength {
+  height: 10px;
+  border-radius: 5px;
+  background: #2a1112;
+  margin-top: 5px;
+}
+
+.strength-bar {
+  height: 10px;
+  border-radius: 5px;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+/* Form layout and alignment for register/login */
+.card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.card form .row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card h2 {
+  margin-bottom: 8px;
+}
+
+/* Home page action buttons */
+.home-actions {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-top: 18px;
+}
+.home-actions a button {
+  min-width: 160px;
+  padding: 12px 18px;
+}
+
+.table-note {
+  text-align: center;
+  color: var(--text-muted);
+  margin: 8px 0 16px;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-main);
+  border-radius: 10px;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.user-table th,
+.user-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(74, 26, 29, 0.75);
+  text-align: left;
+  vertical-align: top;
+}
+
+.user-table th {
+  color: #fff;
+  background: rgba(216, 31, 38, 0.12);
+  position: sticky;
+  top: 0;
+}
+
+.user-table tbody tr:hover {
+  background: rgba(255, 59, 67, 0.05);
+}
+
+.hash-cell {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.88rem;
+  word-break: break-all;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 12px;
+}
+
+/* Small button used on register page */
+.btn-small {
+  width: auto;
+  min-width: 140px;
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 20px;
+    margin: 12px;
+  }
+  .container {
+    padding: 24px 12px;
+    min-height: auto;
+  }
+}
+
+@media (min-width: 901px) {
+  .card {
+    padding: 48px;
+  }
+}

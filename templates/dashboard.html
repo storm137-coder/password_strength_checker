@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h2>Welcome, {{ full_name }}!</h2>
+        <p style="text-align: center; margin: 15px 0">
+          Account created on: <strong>{{ created_at }}</strong>
+        </p>
+        <div class="home-actions">
+          <a href="{{ url_for('users') }}"><button>View Users</button></a>
+          <a href="{{ url_for('password_tool') }}"
+            ><button>Password Tool</button></a
+          >
+        </div>
+        <a href="{{ url_for('logout') }}"><button>Logout</button></a>
+      </div>
+    </div>
+  </body>
+</html>

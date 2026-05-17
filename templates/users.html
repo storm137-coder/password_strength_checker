@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Details</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="card user-table-card">
+        <h2>User Details</h2>
+        <p class="table-note">
+          Registered users are shown below with clear database fields.
+        </p>
+
+        <div class="table-wrap">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Password Hash</th>
+                <th>Created At</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in users %}
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.email }}</td>
+                <td class="hash-cell">{{ user.password_hash }}</td>
+                <td>{{ user.created_at }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if not users %}
+        <p class="empty-state">No users found in the database yet.</p>
+        {% endif %}
+
+        <div class="form-actions center" style="margin-top: 16px">
+          <a href="{{ url_for('dashboard') }}"
+            ><button type="button">Back to Dashboard</button></a
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
