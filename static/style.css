@@ -132,7 +132,7 @@ button:active {
   width: 100%;
 }
 
-/* Centered form actions (use on login page) */
+/* Centered form actions */
 .form-actions.center {
   display: flex;
   justify-content: center;
@@ -239,7 +239,7 @@ a:hover {
   transition: width 0.3s;
 }
 
-/* Form layout and alignment for register/login */
+/* Form layout and alignment */
 .card form {
   display: flex;
   flex-direction: column;
@@ -327,7 +327,7 @@ a:hover {
   margin-top: 12px;
 }
 
-/* Small button used on register page */
+/* Small button variant */
 .btn-small {
   width: auto;
   min-width: 140px;

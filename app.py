@@ -1,18 +1,13 @@
 # app.py
 # Main Flask application file
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, redirect, url_for
 import sqlite3
 from datetime import datetime
 import os
 import pkgutil
 import importlib.util
-from werkzeug.security import generate_password_hash, check_password_hash
-
-try:
-    import bcrypt
-except Exception:
-    bcrypt = None
+from werkzeug.security import generate_password_hash
 
 # Compatibility shim: Python 3.12+ removed `pkgutil.get_loader` which
 # some dependencies (Flask/Werkzeug) still call. Provide a simple
@@ -51,11 +46,6 @@ def hash_password(password):
     # Use Werkzeug's pure-Python hashing for deployment portability.
     return generate_password_hash(password)
 
-
-def verify_password(stored_hash, password):
-    if stored_hash.startswith("$2") and bcrypt is not None:
-        return bcrypt.checkpw(password.encode("utf-8"), stored_hash.encode("utf-8"))
-    return check_password_hash(stored_hash, password)
 
 # -----------------------------
 # Initialize database
@@ -114,129 +104,7 @@ init_db()
 # -----------------------------
 @app.route("/")
 def index():
-    return render_template("index.html")
-
-# -----------------------------
-# Register
-# -----------------------------
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        full_name = request.form["full_name"].strip()
-        email = request.form["email"].strip().lower()
-        password = request.form["password"]
-        confirm_password = request.form["confirm_password"]
-
-        # Basic validation
-        if not full_name or not email or not password or not confirm_password:
-            flash("All fields are required.", "error")
-            return redirect(url_for("register"))
-
-        if password != confirm_password:
-            flash("Passwords do not match.", "error")
-            return redirect(url_for("register"))
-
-        password_hash = hash_password(password)
-
-        conn = None
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute("""
-                INSERT INTO users (full_name, email, password_hash, created_at)
-                VALUES (?, ?, ?, ?)
-            """, (full_name, email, password_hash, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-            conn.commit()
-            conn.close()
-            flash("Registration successful! You can now log in.", "success")
-            return redirect(url_for("login"))
-        except sqlite3.IntegrityError:
-            flash("Email already registered.", "error")
-            return redirect(url_for("register"))
-        except sqlite3.DatabaseError:
-            # Recover from a malformed database and retry once.
-            try:
-                if conn is not None:
-                    conn.close()
-            except Exception:
-                pass
-            database_path = get_database_path()
-            if os.path.exists(database_path):
-                os.remove(database_path)
-            init_db()
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute("""
-                INSERT INTO users (full_name, email, password_hash, created_at)
-                VALUES (?, ?, ?, ?)
-            """, (full_name, email, password_hash, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-            conn.commit()
-            conn.close()
-            flash("Registration successful! You can now log in.", "success")
-            return redirect(url_for("login"))
-
-    return render_template("register.html")
-
-# -----------------------------
-# Login
-# -----------------------------
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        email = request.form["email"].strip().lower()
-        password = request.form["password"]
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
-        user = cursor.fetchone()
-        conn.close()
-
-        if user and verify_password(user["password_hash"], password):
-            session["user_id"] = user["id"]
-            session["full_name"] = user["full_name"]
-            session["created_at"] = user["created_at"]
-            flash("Login successful!", "success")
-            return redirect(url_for("password_tool"))
-        else:
-            flash("Invalid email or password.", "error")
-            return redirect(url_for("login"))
-
-    return render_template("login.html")
-
-# -----------------------------
-# Dashboard (protected)
-# -----------------------------
-@app.route("/dashboard")
-def dashboard():
-    if "user_id" not in session:
-        flash("Please log in first.", "error")
-        return redirect(url_for("login"))
-
-    return render_template("dashboard.html",
-                           full_name=session["full_name"],
-                           created_at=session["created_at"])
-
-# -----------------------------
-# User details table
-# -----------------------------
-@app.route("/users")
-def users():
-    if "user_id" not in session:
-        flash("Please log in first.", "error")
-        return redirect(url_for("login"))
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT id, full_name, email, password_hash, created_at
-        FROM users
-        ORDER BY id DESC
-    """)
-    users = cursor.fetchall()
-    conn.close()
-
-    return render_template("users.html", users=users)
+    return redirect(url_for("password_tool"))
 
 # -----------------------------
 # Password generator/checker page
@@ -244,15 +112,6 @@ def users():
 @app.route("/password")
 def password_tool():
     return render_template("password.html")
-
-# -----------------------------
-# Logout
-# -----------------------------
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash("Logged out successfully.", "success")
-    return redirect(url_for("login"))
 
 # -----------------------------
 # Run server
